@@ -13,7 +13,8 @@ class ViewController: UIViewController {
   var currentValue = 0
   var targetValue = 0
   var score = 0
-  var attempt = 11
+  var currentScore = 0
+  var attempt = 6
   @IBOutlet weak var slider: UISlider!
   @IBOutlet weak var targetLabel: UILabel!
   @IBOutlet weak var scoreLabel: UILabel!
@@ -23,20 +24,35 @@ class ViewController: UIViewController {
     super.viewDidLoad()
     let roundedValue = slider.value.rounded()
     currentValue = Int(roundedValue)
-    startNewRound()
+    startNewGame()
+    
+    let thumbImageNormal = UIImage(named: "SliderThumb-Normal")!
+    slider.setThumbImage(thumbImageNormal, for: .normal)
+    
+    let thumbImageHighlighted = UIImage(named: "SliderThumb-Highlighted")!
+    slider.setThumbImage(thumbImageHighlighted, for: .highlighted)
+    
+    let insets = UIEdgeInsets(top: 0, left: 14, bottom: 0, right: 14)
+    
+    let trackLeftImage = UIImage(named: "SliderTrackLeft")!
+    let trackLeftResizable = trackLeftImage.resizableImage(withCapInsets: insets)
+    slider.setMinimumTrackImage(trackLeftResizable, for: .normal)
+    
+    let trackRightImage = UIImage(named: "SliderTrackRight")!
+    let trackRightResizable = trackRightImage.resizableImage(withCapInsets: insets)
+    slider.setMaximumTrackImage(trackRightResizable, for: .normal)
   }
 
   @IBAction func showAlert() {
-    
-    let message = "Ты получил \(pointsForCurrentRound()) \(scoreEnding())"
+    currentScore = scoreForCurrentRound()
+    let message = messegeTitle()
     let alert = UIAlertController(title: alertTitle(), message: message, preferredStyle: .alert)
-    let action = UIAlertAction(title: "Awesome", style: .default, handler: nil)
-    
+    let action = UIAlertAction(title: buttonTitle(), style: .default, handler: {
+      action in
+      self.startNewRound()
+    })
     alert.addAction(action)
-    
     present(alert, animated: true, completion: nil)
-    
-    startNewRound()
     
   }
     
@@ -47,10 +63,22 @@ class ViewController: UIViewController {
   
   func startNewRound() {
     attempt -= 1
+    if attempt == 0 {
+      startNewGame()
+    }
+    score += currentScore
     targetValue = Int.random(in: 1...1000)
     currentValue = 500
     slider.value = Float(currentValue)
     updateLables()
+  }
+  
+  @IBAction func startNewGame() {
+    score = 0
+    currentScore = 0
+    attempt = 6
+    currentValue = 0
+    startNewRound()
   }
   
   func updateLables() {
@@ -59,7 +87,7 @@ class ViewController: UIViewController {
     attemptLabel.text = String(attempt)
   }
   
-  func pointsForCurrentRound() -> Int {
+  func scoreForCurrentRound() -> Int {
     let maxScore = 100
     let difference = abs(targetValue - currentValue)
     var bonus = 0
@@ -67,7 +95,7 @@ class ViewController: UIViewController {
       bonus = 100
     } else if difference <= 10 {
       bonus = 50
-    } else if difference > 50 {
+    } else if difference > 100 {
       return 0
     }
     return maxScore - difference + bonus
@@ -75,9 +103,9 @@ class ViewController: UIViewController {
   
   func scoreEnding() -> String {
     let ending: String
-    if pointsForCurrentRound() == 1 {
+    if currentScore == 1 {
       ending = "балл"
-    } else if pointsForCurrentRound() > 1 &&  pointsForCurrentRound() < 5 {
+    } else if currentScore > 1 && currentScore < 5 {
       ending = "балла"
     } else {
       ending = "баллов"
@@ -85,28 +113,40 @@ class ViewController: UIViewController {
     return ending
   }
   
+  func buttonTitle() -> String {
+    let title: String
+    if attempt > 1 {
+      title = "Продолжить"
+    } else {
+      title = "Заново"
+    }
+    return title
+  }
+  
+  func messegeTitle() -> String {
+    let message: String
+    if attempt > 1 {
+      message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())"
+    } else {
+      message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())\n" + "Твой счет: \(score)"
+    }
+    return message
+  }
+
+  
   func alertTitle() -> String {
     let difference = abs(targetValue - currentValue)
     let title: String
-    if attempt <= 1 {
-      if score > 0 {
-        title = "Победа!"
-      } else {
-        title = "Проигрыш..."
-      }
-    }
-    else {
-      if difference == 0 {
-        title = "В яблочко!"
-      } else if difference <= 10 {
-        title = "Цель была близко!"
-      } else if difference <= 50 {
-        title = "Неплохо"
-      } else {
-        title = "Ты вообще пытаешься?"
-      }
+
+    if difference == 0 {
+      title = "В яблочко!"
+    } else if difference <= 10 {
+      title = "Цель была близко!"
+    } else if difference <= 100 {
+      title = "Неплохо"
+    } else {
+      title = "Ты вообще пытаешься?"
     }
     return title
   }
 }
-
