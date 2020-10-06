@@ -1,3 +1,3 @@
 # Bull's Eye
 
-![bullseye-prewiew](prewiew/bullseye.gif)
+![bullseye-prewiew](preview/bullseye.gif)
