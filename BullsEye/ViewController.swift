@@ -45,7 +45,7 @@ class ViewController: UIViewController {
 
   @IBAction func showAlert() {
     currentScore = scoreForCurrentRound()
-    let message = messegeTitle()
+    let message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())"
     let alert = UIAlertController(title: alertTitle(), message: message, preferredStyle: .alert)
     let action = UIAlertAction(title: buttonTitle(), style: .default, handler: {
       action in
@@ -123,29 +123,21 @@ class ViewController: UIViewController {
     return title
   }
   
-  func messegeTitle() -> String {
-    let message: String
-    if attempt > 1 {
-      message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())"
-    } else {
-      message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())\n" + "Твой счет: \(score)"
-    }
-    return message
-  }
-
-  
   func alertTitle() -> String {
     let difference = abs(targetValue - currentValue)
     let title: String
-
-    if difference == 0 {
-      title = "В яблочко!"
-    } else if difference <= 10 {
-      title = "Цель была близко!"
-    } else if difference <= 100 {
-      title = "Неплохо"
+    if attempt > 1 {
+      if difference == 0 {
+        title = "В яблочко!"
+      } else if difference <= 10 {
+        title = "Цель была близко!"
+      } else if difference <= 100 {
+        title = "Неплохо"
+      } else {
+        title = "Ты вообще пытаешься?"
+      }
     } else {
-      title = "Ты вообще пытаешься?"
+      title = "Твой счет: \(score)"
     }
     return title
   }
