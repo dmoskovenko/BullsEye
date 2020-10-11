@@ -22,6 +22,7 @@ class ViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
     let roundedValue = slider.value.rounded()
     currentValue = Int(roundedValue)
     startNewGame()
