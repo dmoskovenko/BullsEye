@@ -15,6 +15,8 @@ class ViewController: UIViewController {
   var score = 0
   var currentScore = 0
   var attempt = 6
+  var difference = 0
+  
   @IBOutlet weak var slider: UISlider!
   @IBOutlet weak var targetLabel: UILabel!
   @IBOutlet weak var scoreLabel: UILabel!
@@ -46,9 +48,9 @@ class ViewController: UIViewController {
 
   @IBAction func showAlert() {
     currentScore = scoreForCurrentRound()
-    let message = "Текущее значение: \(currentValue)\n" + "Ты получил \(currentScore) \(scoreEnding())"
+    let message = "The slider's value is: \(currentValue)\n" + "You scored \(currentScore) points this round."
     let alert = UIAlertController(title: alertTitle(), message: message, preferredStyle: .alert)
-    let action = UIAlertAction(title: buttonTitle(), style: .default, handler: {
+    let action = UIAlertAction(title: buttonText(), style: .default, handler: {
       action in
       self.startNewRound()
     })
@@ -90,7 +92,7 @@ class ViewController: UIViewController {
   
   func scoreForCurrentRound() -> Int {
     let maxScore = 100
-    let difference = abs(targetValue - currentValue)
+    difference = getDifference()
     var bonus = 0
     if difference == 0 {
       bonus = 100
@@ -102,43 +104,28 @@ class ViewController: UIViewController {
     return maxScore - difference + bonus
   }
   
-  func scoreEnding() -> String {
-    let ending: String
-    if currentScore == 1 {
-      ending = "балл"
-    } else if currentScore > 1 && currentScore < 5 {
-      ending = "балла"
-    } else {
-      ending = "баллов"
-    }
-    return ending
+  func getDifference() -> Int {
+    return abs(targetValue - currentValue)
   }
   
-  func buttonTitle() -> String {
-    let title: String
-    if attempt > 1 {
-      title = "Продолжить"
-    } else {
-      title = "Заново"
-    }
-    return title
+  func buttonText() -> String {
+    return (attempt > 1) ? "Continue" : "Restart"
   }
   
   func alertTitle() -> String {
-    let difference = abs(targetValue - currentValue)
     let title: String
     if attempt > 1 {
       if difference == 0 {
-        title = "В яблочко!"
+        title = "Perfect!"
       } else if difference <= 10 {
-        title = "Цель была близко!"
+        title = "You almost had it!"
       } else if difference <= 100 {
-        title = "Неплохо"
+        title = "Not bad"
       } else {
-        title = "Ты вообще пытаешься?"
+        title = "Are you even trying?"
       }
     } else {
-      title = "Твой счет: \(score)"
+      title = "Your score: \(score)"
     }
     return title
   }
