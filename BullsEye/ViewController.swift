@@ -98,7 +98,7 @@ class ViewController: UIViewController {
       bonus = 100
     } else if difference <= 10 {
       bonus = 50
-    } else if difference > 100 {
+    } else if difference >= 100 {
       return 0
     }
     return maxScore - difference + bonus
@@ -119,7 +119,7 @@ class ViewController: UIViewController {
         title = "Perfect!"
       } else if difference <= 10 {
         title = "You almost had it!"
-      } else if difference <= 100 {
+      } else if difference < 100 {
         title = "Not bad"
       } else {
         title = "Are you even trying?"
